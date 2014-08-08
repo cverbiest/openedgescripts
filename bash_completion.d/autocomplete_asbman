@@ -1,0 +1,53 @@
+_asbman() 
+{
+    local cur prev opts base asname apsvlist agentlist
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    #
+    #  The basic options we'll complete.
+    #
+    opts="-help -h -name -i -all -start -x -user -u -host -r -port -query -q -trimservers -trim -addservers -s -kill -k -listclients -clientdetail -listallprops -agentdetail -agentstop -agentkill -stop -e"
+
+    #
+    #  Complete the arguments to some of the basic commands.
+    #
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+    case "${prev}" in
+        -i)
+            apsvlist=$(grep '\[UBroker\.AS\.' $DLC/properties/ubroker.properties | sed 's/\[UBroker\.AS\.\(.*\)\]/\1/')
+            COMPREPLY=( $(compgen -W "${apsvlist}" -- ${cur}) )
+            return 0
+            ;;
+        -agentdetail)
+            # Get the name of the appserver from the commandline
+            for index in ${!COMP_WORDS[*]}
+            do
+            echo $index ${COMP_WORDS[$index]}
+                if [[ ${COMP_WORDS[$index]} == -i ]]
+                then
+                    asname=${COMP_WORDS[$index+1]}
+                fi
+            done
+            # if appserver name found, get list of agents
+            if [[ -n "$asname" ]]
+            then
+                agentlist=$(asbman -i "$asname"  -q | sed -e '1,/PID   State/d' -e 's/ .*//')
+                COMPREPLY=( $(compgen -W "${agentlist}" -- ${cur}) )
+                return 0
+            fi
+            ;;
+        *)
+        ;;
+    esac
+
+   COMPREPLY=($(compgen -W "${opts}" -- ${cur}))  
+   return 0
+}
+complete -F _asbman asbman
+
+
