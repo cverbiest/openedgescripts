@@ -13,21 +13,36 @@ This project is written in bash
 I'm Carl Verbiest, I work at [CCE nv](http://www.cce.be) as head of the tool development team. CCE started with Progress version 4, my first Progress experiences were with version 6.2.
 
 # Installation
+## Requires
+### bash_completion
+	yum install bash_completion
+## Using install
+Execute install.sh
+
+## Manually
 Copy the files in bash_completion.d to /etc/bash_completion.d
 Alternatively you can create links in /etc/bash_completion.d pointing to the files
+
+## Without the bash_completion package
+You don't bash_completion if you source the completion files in you bash profile 
+	for file in /path/to/bash_completion.d/*
+	do
+		. $file
+	done
+
 
 ## Configuration
 $DLC/bin in path
 
 # Available autocompletion
+* proadsv
 * asbman
 
 ## Todo's
-* proadsv
 * nsman
 * proutil
 * ...
 
 ## Known issues
-* shows oe11.3 options , doesn't check version
+* uses oe11.3 options , doesn't check oe version
 

@@ -1,5 +1,6 @@
 _asbman() 
 {
+set > /tmp/set.out
     local cur prev opts base asname apsvlist agentlist
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
@@ -19,7 +20,7 @@ _asbman()
     fi
     case "${prev}" in
         -i)
-            apsvlist=$(grep '\[UBroker\.AS\.' $DLC/properties/ubroker.properties | sed 's/\[UBroker\.AS\.\(.*\)\]/\1/')
+            apsvlist=$(grep '\[UBroker\.AS\.' ${DLC:-/usr/dlc}/properties/ubroker.properties | sed 's/\[UBroker\.AS\.\(.*\)\]/\1/')
             COMPREPLY=( $(compgen -W "${apsvlist}" -- ${cur}) )
             return 0
             ;;
@@ -49,5 +50,3 @@ _asbman()
    return 0
 }
 complete -F _asbman asbman
-
-

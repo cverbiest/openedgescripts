@@ -1,0 +1,67 @@
+#!/bin/bash
+# vim: se ts=4 sw=4 ai:
+
+_proadsv() 
+{
+    compopt +o default
+    local cur prev opts base mainopt asname apsvlist agentlist
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    #
+    #  The basic options we'll complete.
+    #
+    opts="-help -start -stop -query"
+    mainopt=${COMP_WORDS[1]}
+
+    #
+    # options depending on the first option
+    # 
+    case "${mainopt}" in
+        -help)
+            opts="-help -start -stop -query"
+            ;;
+        -start)
+            opts="-help -f -port -adminport -dbproperties -dbaproperties -fathominitparams -fathomproperties -smdbproperties -ubproperties -mgmtproperties -interactive -admingroup -requireusername"
+            ;;
+        -stop)
+            opts="-help -keepservers -port -user -password"
+            ;;
+        -query)
+            opts="-help -all -verbose -port"
+    esac
+
+    #
+    #  Complete the arguments to some of the basic commands.
+    #
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+    case "${prev}" in
+        #
+        # Options requiring a logical
+        #
+        -interactive)
+            COMPREPLY=( $(compgen -W "true false" -- ${cur}) )
+            return 0
+            ;;
+        #
+        # Options requiring a filename
+        #
+        -f|-dbproperties-dbaproperties|-fathominitparams|-fathomproperties|-smdbproperties|-ubproperties|-mgmtproperties)
+            # try to complete those using standard compgen didn't work
+            # COMPREPLY=( $(compgen -o filenames -A file ${cur}) )
+
+            # Use default completion, see http://stackoverflow.com/a/19062943/1817610
+            compopt -o default
+            COMPREPLY=()
+            return 0
+            ;;
+    esac
+
+   COMPREPLY=($(compgen -W "${opts}" -- ${cur}))  
+   return 0
+}
+complete -F _proadsv proadsv
