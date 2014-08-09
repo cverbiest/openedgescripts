@@ -1,3 +1,3 @@
-DLC=/usr/dlc
+DLC=${DLC:-/usr/dlc}
 PATH=$PATH:$DLC/bin
 export DLC PATH
