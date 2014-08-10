@@ -12,20 +12,30 @@ This project is written in bash
 ## About me
 I'm Carl Verbiest, I work at [CCE nv](http://www.cce.be) as head of the tool development team. CCE started with Progress version 4, my first Progress experiences were with version 6.2.
 
+# What to expect
+## bash completion for (some) OpenEdge executables
+
+Type
+
+	prou[TAB]/t[TAB]s[TAB] [TAB]tr[TAB]b[TAB]
+to get
+
+	proutil /tmp/sports -C truncate bi
+
 # Installation
 ## Requires
-### bash_completion
-	yum install bash_completion
+### bash\_completion
+	yum install bash\_completion
 ## Using install
 Execute install.sh
 
 ## Manually
-Copy the files in bash_completion.d to /etc/bash_completion.d
-Alternatively you can create links in /etc/bash_completion.d pointing to the files
+Copy the files in bash\_completion.d to /etc/bash\_completion.d
+Alternatively you can create links in /etc/bash\_completion.d pointing to the files
 
-## Without the bash_completion package
-You don't bash_completion if you source the completion files in you bash profile 
-	for file in /path/to/bash_completion.d/*
+## Without the bash\_completion package
+You don't bash\_completion if you source the completion files in you bash profile 
+	for file in /path/to/bash\_completion.d/*
 	do
 		. $file
 	done
@@ -37,10 +47,12 @@ $DLC/bin in path
 # Available autocompletion
 * proadsv
 * asbman
+* proutil
 
 ## Todo's
+* pro, mpro, _progres
+* proutil options
 * nsman
-* proutil
 * ...
 
 ## Known issues

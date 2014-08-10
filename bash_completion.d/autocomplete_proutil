@@ -1,0 +1,177 @@
+#!/bin/bash
+# vim: se ts=4 sw=4 ai:
+
+_proutil() 
+{
+    compopt +o default
+    compopt +o nospace
+    local cur prev opts base utilqualifier
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    if [[ $COMP_CWORD == 1 ]]
+    then
+        # first option is a db-name (without .db)
+        # create a list of directories and dbs files, without .db, matching the current argument
+        dirdblist=$(ls -dF ${cur}* 2>/dev/null | sed -n -e '/\/$/p' -e 's/.db$//p')
+        # adding space to directories hinders next completion 
+        compopt -o nospace
+        COMPREPLY=(${dirdblist})
+        return 0
+    fi
+    if [[ $COMP_CWORD == 2 ]]
+    then
+        # AFAIK the only second option is -C
+        # -yy of bulkload seems an exception I'll try to ignore that as it's already complex enough
+        opts="-C"
+    else
+        #
+        # options depending on the previous option
+        # 
+        case "${prev}" in
+            -C)
+                opts="2phase auditarchive auditload auditreconfig bigrow bulkload busy chanalys codepage-compiler conv1011 convchar convfile datamove dbanalys dbauthkey dbipcs dbrestrict describe disableauditing disableb2 disableencryption deallocate disablejta disablekeyevents disalbemtidxbld disablemultitenancy disptosscreatelimits dump dumpspecified enableauditing enableb2 enableencryption enablejta enablekeyevents enablelargefiles enablelargekeys enablemtidxbld enablemultitenancy enableseq64 enablestoredproc epolicy holder idxactivate idxanalys idxcompact idxmove idxbuild idxcheck idxfix increaseto iostats load mtidxbuild mvsch rcodekey setareacreatelimit setareatosslimit setblobcreatelimit setblobtosslimit setlobcreatelimit setlobtosslimit settablecreatelimit settabletosslimit tabanalys tablemove truncate updateschema updatevst viewb2 wbreak-compiler word-rules"
+                ;;
+            2phase)
+                opts="begin commit end modify recover"
+                ;;
+            epolicy)
+                opts="info manage scan view"
+                ;;
+            truncate)
+                opts="area bi"
+                ;;
+        esac
+    fi
+    if [[ -n "$opts" ]]
+    then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+
+    #
+    # Determine qualifier 
+    # 
+    if [[ "${COMP_WORDS[2]}" == -C ]]
+    then 
+        utilqualifier=$(echo ${COMP_WORDS[3]} | tr [A-Z] [a-z])
+        # check if its a double word command
+        case "$utilqualifier" in
+            2phase|epolicy|truncate)
+                 utilqualifier="${utilqualifier}_${COMP_WORDS[4]}"
+        esac
+        utilqualifier=$(echo $utilqualifier| tr [A-Z] [a-z])
+        # echo Found utilqualifier $utilqualifier
+    fi
+
+    #
+    #  Complete the arguments to some of the basic commands.
+    #
+    case "${prev}" in
+        #
+        # Options requiring a logical
+        #
+        -Autostart)
+            COMPREPLY=( $(compgen -W "admin user" -- ${cur}) )
+            return 0;;
+        -biencryption|-aiencryption)
+            COMPREPLY=( $(compgen -W "enable disable" -- ${cur}) )
+            return 0;;
+        -Cipher)
+            case $utilqualifier in
+                enableencryption) COMPREPLY=( $(compgen -W "0 1 2 3 4 5 6 7" -- ${cur}) );;
+                *) COMPREPLY=("6");;
+            esac
+            return 0;;
+        -interactive)
+            COMPREPLY=( $(compgen -W "true false" -- ${cur}) )
+            return 0
+            ;;
+        #
+        # Options requiring a filename
+        #
+        bulkload|-dumplist)
+            # Use default completion, see http://stackoverflow.com/a/19062943/1817610
+            compopt -o default
+            COMPREPLY=()
+            return 0
+            ;;
+        #
+        # Options requiring a directory, currently same handling as filename
+        #
+        -directory|datadir)
+            # Use default completion, see http://stackoverflow.com/a/19062943/1817610
+            compopt -o default
+            COMPREPLY=()
+            return 0
+            ;;
+    esac
+
+    #
+    # Build opts for qualifier
+    # 
+    case "$utilqualifier" in
+        2phase_begin|2phase_modify)
+            opts="-crd -tp";;
+        auditarchive)
+            opts="-recs -nodelete -checkseal -directory -userid -password -Cipher";;
+        auditload)
+            opts="-recs -checkseal -userid -password -Cipher";;
+        auditreconfig) 
+            opts="tablearea indexarea -userid -password";;
+        bigrow)
+            opts="-r";;
+        bulkload)
+            opts="-yy tenant group datadir -B";;
+        chanalys|dbanalys|disptosscreatelimits)
+            opts="area tenant group shared";;
+        codepage-compiler)
+            compopt -o default; COMPREPLY=(); return 0;;
+        convchar)
+            opts="analyze charscan convert"
+            # todo add available codepages to the opts list
+            ;;
+        convfile)
+            # todo handle options with spaces
+            case $COMP_CWORD in
+                5) COMPREPLY=($(IFS=: compgen -W "convert using:analyze")); return 0;;
+                *) compopt -o default; COMPREPLY=(); return 0;;
+            esac
+            ;;
+        dbrestrict)
+            # todo handle options with spaces
+            case $COMP_CWORD in
+                4) opts="rollforward datamove";;
+                5) opts="enable disable status";;
+            esac
+            ;;
+        deallocate)
+            opts="tenant group";;
+        disableauditing)
+            opts="-userid -password";;
+        disableencryption)
+            opts="-Passphrase -userid -password";;
+        dump)
+            opts="tenant group -index -thread n -threadnum -dumplist -Cipher";;
+        dumpspecfied)
+            opts="tenant group -index -thread n -threadnum -dumplist -Cipher and ge gt le lt eq";;
+        enableauditing)
+            opts="area indexarea deactivateidx";;
+        enableencryption)
+            opts="-Cipher -Autostart -biencryption -aiencryption -Passphrase -userid -password";;
+        epolicy_info)
+            opts="-userid -password";;
+        *) 
+            # fall back to standard autocompletion
+            compopt -o default
+            COMPREPLY=()
+            return 0
+            ;;
+    esac
+
+   COMPREPLY=($(compgen -W "${opts}" -- ${cur}))  
+   return 0
+}
+complete -F _proutil proutil
+
