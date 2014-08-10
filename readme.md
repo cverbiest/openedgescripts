@@ -15,7 +15,7 @@ I'm Carl Verbiest, I work at [CCE nv](http://www.cce.be) as head of the tool dev
 # What to expect
 ## bash completion for (some) OpenEdge executables
 
-Type
+Assuming that /tmp/sports.db exists, type
 
 	prou[TAB]/t[TAB]s[TAB] [TAB]tr[TAB]b[TAB]
 to get
