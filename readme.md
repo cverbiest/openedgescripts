@@ -5,7 +5,7 @@ Linux (bash) Scripts to share with the OE community
 
 ## No warranty
 This is a spare time project. Comments, through the Progress communities site, are welcomed. Chances are that it will take a while before there is a response.
-I share this project in the hope, but without any warranty, that it can be useful for some-one. Maybe it can serve as an example how certain tasks can be automated.
+I share this project in the hope, but without any warranty, that it can be useful for some-one. Maybe it can help as an example for writing your own autocomplete.
 
 This project is written in bash
 
@@ -34,7 +34,7 @@ Copy the files in bash\_completion.d to /etc/bash\_completion.d
 Alternatively you can create links in /etc/bash\_completion.d pointing to the files
 
 ## Without the bash\_completion package
-You don't bash\_completion if you source the completion files in you bash profile 
+You probably don't need bash\_completion if you source the completion files in you bash profile 
 	for file in /path/to/bash\_completion.d/*
 	do
 		. $file
