@@ -1,0 +1,44 @@
+_tcman() 
+{
+    local cur prev opts base asname apsvlist agentlist
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    #
+    #  The basic options we'll complete.
+    #
+
+    opts="stop start create clean config"
+
+    #
+    #  Complete the arguments to some of the basic commands.
+    #
+    tcman_cmd=$(readlink -m "${COMP_WORDS[0]}")
+    tcman_dir=${tcman_cmd%/*}
+    tcman_type=$(sed -n 's/ *psc\.as\.type *= *\([^ ]*.*\)/\1/p' < ${tcman_dir}/../conf/appserver.properties)
+    case $tcman_type in
+        instance) opts="enable deploy disable info leaks list reload resources sessions status undeploy";;
+        standard) opts="clean config create delete env feature instances plist register service showproc start stop test unregister version workers";;
+    esac
+cat <<END > /tmp/set.out
+completing ${COMP_WORDS[0]}
+tcman_cmd=$tcman_cmd
+tcman_dir=$tcman_dir
+tcman_type=$tcman_type
+opts=$opts
+===========
+Environment
+===========
+END
+set >> /tmp/set.out
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+
+   COMPREPLY=($(compgen -W "${opts}" -- ${cur}))  
+   return 0
+}
+complete -F _tcman tcman.sh
+complete -F _tcman */tcman.sh
