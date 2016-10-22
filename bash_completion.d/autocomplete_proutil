@@ -93,8 +93,10 @@ _proutil()
         #
         bulkload|-dumplist)
             # Use default completion, see http://stackoverflow.com/a/19062943/1817610
-            compopt -o default
-            COMPREPLY=()
+            _compopt_o_filenames
+            COMPREPLY=( $( compgen -c -- "$cur" ) )
+            # compopt -o default
+            # COMPREPLY=()
             return 0
             ;;
         #

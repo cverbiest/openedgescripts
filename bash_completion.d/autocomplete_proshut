@@ -1,0 +1,40 @@
+#!/bin/bash
+# vim: se ts=4 sw=4 ai:
+
+_proshut() 
+{
+    #compopt +o default
+    #compopt +o nospace
+    local cur prev opts base utilqualifier
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    if [[ $COMP_CWORD == 1 ]]
+    then
+        # first option is a db-name (without .db)
+        # create a list of directories and dbs files, without .db, matching the current argument
+        dirdblist=$(ls -dF ${cur}* 2>/dev/null | sed -n -e '/\/$/p' -e 's/.db$//p')
+        # adding space to directories hinders next completion 
+        #compopt -o nospace
+        COMPREPLY=(${dirdblist})
+        return 0
+    fi
+    opts="-C -by -bn -H -S -shutdownTimeout -F -Gw"
+    #
+    # options depending on the previous option
+    # 
+    case "${prev}" in
+        -C)
+            opts="list disconnect"
+            ;;
+        -shutdownTimeout)
+            opts="immed maximum"
+            ;;
+    esac
+
+   COMPREPLY=($(compgen -W "${opts}" -- ${cur}))  
+   return 0
+}
+complete -F _proshut proshut
+
