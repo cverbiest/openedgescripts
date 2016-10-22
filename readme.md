@@ -2,6 +2,7 @@
 
 ## Purpose
 Linux (bash) Scripts to share with the OE community
+Moved to git from the [original](https://bitbucket.org/cverbiest/openedgescripts) using [this] (https://hedonismbot.wordpress.com/2008/10/16/hg-fast-export-convert-mercurial-repositories-to-git-repositories/)
 
 ## No warranty
 This is a spare time project. Comments, through the Progress communities site, are welcomed. Chances are that it will take a while before there is a response.
@@ -57,4 +58,4 @@ $DLC/bin in path
 
 ## Known issues
 * uses oe11.3 options , doesn't check oe version
-* some options don't work on RHEL 5
+* some options don't work on RHEL 5, 
