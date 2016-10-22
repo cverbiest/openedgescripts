@@ -57,4 +57,4 @@ $DLC/bin in path
 
 ## Known issues
 * uses oe11.3 options , doesn't check oe version
-
+* some options don't work on RHEL 5
