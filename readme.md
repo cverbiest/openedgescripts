@@ -14,7 +14,7 @@ This project is written in bash
 I'm Carl Verbiest, I work at [CCE nv](http://www.cce.be) as head of the tool development team. CCE started with Progress version 4, my first Progress experiences were with version 6.2.
 
 # What to expect
-## bash completion for (some) OpenEdge executables
+## bash completion for some OpenEdge executables
 
 Assuming that /tmp/sports.db exists, type
 
@@ -49,12 +49,15 @@ $DLC/bin in path
 * proadsv
 * asbman
 * proutil
+* tcman, just started, list of commands only
 
 ## Todo's
 * pro, mpro, _progres
 * proutil options
-* nsman
 * ...
+
+## Won't do
+* nsman, no longer used with PASOE
 
 ## Known issues
 * uses oe11.3 options , doesn't check oe version

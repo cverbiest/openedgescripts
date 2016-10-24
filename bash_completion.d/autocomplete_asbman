@@ -1,6 +1,5 @@
 _asbman() 
 {
-set > /tmp/set.out
     local cur prev opts base asname apsvlist agentlist
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"

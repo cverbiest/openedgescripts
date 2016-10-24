@@ -17,10 +17,32 @@ _tcman()
     tcman_cmd=$(readlink -m "${COMP_WORDS[0]}")
     tcman_dir=${tcman_cmd%/*}
     tcman_type=$(sed -n 's/ *psc\.as\.type *= *\([^ ]*.*\)/\1/p' < ${tcman_dir}/../conf/appserver.properties)
-    case $tcman_type in
-        instance) opts="enable deploy disable info leaks list reload resources sessions status undeploy";;
-        standard) opts="clean config create delete env feature instances plist register service showproc start stop test unregister version workers";;
-    esac
+    if [ $COMP_CWORD -ge 2 ]
+    then 
+        opts="-u -v -M -B -n "
+        case "${COMP_WORDS[1]}" in
+            "create")
+                opts="$opts -f -p -P -s -j -W -N -U -G";;
+            "delete")
+                opts="$opts -y ";;
+            "env")
+                opts="running mgrurl type alias parent tracking http https shut pid";;
+            "help")
+                opts="enable deploy disable info leaks list reload resources sessions status undeploy"
+                opts="$opts clean config create delete env feature instances plist"
+                opts="$opts register service showproc test unregister version workers";;
+        esac
+    else
+        opts="help env status start stop"
+        case $tcman_type in
+            instance)
+                opts="$opts enable deploy disable info leaks list reload resources sessions status undeploy";;
+            standard)
+                opts="$opts clean config create delete env feature instances plist"
+                opts="$opts register service showproc test unregister version workers";;
+        esac
+    fi
+    
 cat <<END > /tmp/set.out
 completing ${COMP_WORDS[0]}
 tcman_cmd=$tcman_cmd
